@@ -1,0 +1,25 @@
+---
+- name: Generate Terminator configuration
+  hosts: all
+  gather_facts: no
+  vars:
+    terminator_config:
+      global_config:
+        disable_mouse_paste: true
+      keybindings:
+        full_screen: "<Ctrl><Shift>F11"
+      profiles:
+        default:
+          background_type: "transparent"
+          background_darkness: 0.5
+          scrollback_lines: 10000
+
+  tasks:
+    - name: Transform config
+      template:
+        src: terminator_config.j2
+        dest: terminator_config
+
+    - name: Display the generated configuration
+      debug:
+        msg: "{{ lookup('file', 'terminator_config') }}"

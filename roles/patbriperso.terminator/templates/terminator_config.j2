@@ -1,0 +1,13 @@
+{% macro render_config(config, level=0) %}
+{% for key, value in config.items() %}
+{% if value is mapping %}
+{%- set bracket_level = '[' * (level + 1) -%}
+{%- set closing_bracket_level = ']' * (level + 1) -%}
+{% for i in range(level) %}  {% endfor %}{{ bracket_level }}{{ key }}{{ closing_bracket_level }}
+{{ render_config(value, level + 1) }}
+{% else %}
+{% for i in range(level) %}  {% endfor %}{{ key }} = {{ value | string }}
+{% endif %}
+{% endfor %}
+{% endmacro %}
+{{ render_config(terminator_config) }}

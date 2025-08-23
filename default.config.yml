@@ -1,2 +1,12 @@
 ---
-install_nvm: true
+nvm:
+  install: true
+terminator:
+  install: true
+  config:
+    global_config:
+      inactive_color_offset: 0.7
+    profiles:
+      default:
+        scrollback_infinite: True
+        # scrollback_lines: 5000

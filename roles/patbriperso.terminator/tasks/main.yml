@@ -1,0 +1,13 @@
+---
+- name: Install Terminator
+  become: true
+  tags: ['install']
+  ansible.builtin.apt:
+    name: terminator
+    state: present
+
+- name: Generate configuration for Terminator
+  tags: ['configure']
+  ansible.builtin.template:
+    src: terminator_config.j2
+    dest: ~/.config/terminator/config

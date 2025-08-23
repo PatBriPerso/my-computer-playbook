@@ -1,0 +1,11 @@
+---
+# Set the configuration options for Terminator below.
+# See `man terminator_config` for available options.
+terminator_config:
+  global_config:
+    disable_mouse_paste: false
+  # keybindings:
+  #   full_screen: "<Ctrl><Shift>F11"
+  profiles:
+    default:
+      background_type: "solid"
