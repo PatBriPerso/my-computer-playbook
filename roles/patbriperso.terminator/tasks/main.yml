@@ -6,6 +6,13 @@
     name: terminator
     state: present
 
+- name: Ensure configuration directory exists
+  tags: ['configure']
+  ansible.builtin.file:
+    path: ~/.config/terminator
+    state: directory
+    mode: '0755'
+
 - name: Generate configuration for Terminator
   tags: ['configure']
   ansible.builtin.template:
