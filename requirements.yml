@@ -3,3 +3,5 @@ roles:
   - name: morgangraphics.ansible_role_nvm
     version: "v2.0.0"
   - name: geerlingguy.docker
+collections:
+  - name: community.general

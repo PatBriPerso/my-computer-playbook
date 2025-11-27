@@ -40,3 +40,16 @@
         - name: Install Docker
           ansible.builtin.include_role:
             name: geerlingguy.docker
+
+    - name: Install flatpak
+      become: true
+      ansible.builtin.apt:
+        name: flatpak
+        state: present
+
+    - name: Install VSCodium
+      tags: ['vsc']
+      community.general.flatpak:
+        name: com.vscodium.codium
+        state: present
+
