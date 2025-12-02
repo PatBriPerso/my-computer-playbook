@@ -8,5 +8,13 @@ terminator:
       inactive_color_offset: 0.7
     profiles:
       default:
+        visible_bell: True
         scrollback_infinite: True
         # scrollback_lines: 5000
+flatpak:
+  install: true
+  apps_to_install:
+    - com.vscodium.codium
+    - com.jetbrains.IntelliJ-IDEA-Ultimate
+    - com.bambulab.BambuStudio
+    - org.deskflow.deskflow

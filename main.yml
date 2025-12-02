@@ -41,15 +41,11 @@
           ansible.builtin.include_role:
             name: geerlingguy.docker
 
-    - name: Install flatpak
-      become: true
-      ansible.builtin.apt:
-        name: flatpak
-        state: present
-
-    - name: Install VSCodium
-      tags: ['vsc']
-      community.general.flatpak:
-        name: com.vscodium.codium
-        state: present
-
+    - name: Install flatpak with applications
+      tags: ['flatpak']
+      when: flatpak.install | bool
+      ansible.builtin.import_role:
+        name: patbriperso.flatpak
+      vars:
+        apps_to_install: "{{ flatpak.apps_to_install | default([]) }}"
+        apps_to_remove: "{{ flatpak.apps_to_remove | default([]) }}"

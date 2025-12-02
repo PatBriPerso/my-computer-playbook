@@ -1,0 +1,19 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Install flatpak
+  become: true
+  ansible.builtin.apt:
+    name: flatpak
+    state: present
+
+- name: Install flatpak applications
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ apps_to_install }}"
+
+- name: Remove flatpak applications
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ apps_to_remove }}"
