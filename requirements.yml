@@ -4,5 +4,6 @@ roles:
     version: "v2.0.0"
   - name: geerlingguy.docker
   - src: https://github.com/jamescassell/ansible-role-loop.git
+  - name: stefangweichinger.ansible_rclone
 collections:
   - name: community.general

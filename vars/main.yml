@@ -19,6 +19,10 @@ default_apps_groups:
       - name: TagSpaces
         type: apt
         deb: https://github.com/tagspaces/tagspaces/releases/download/v6.7.3/tagspaces-linux-amd64-6.7.3.deb
+      - name: rclone
+        type: role
+        role: stefangweichinger.ansible_rclone
+        become: true
 
   dev:
     description: "Outils de développement"
