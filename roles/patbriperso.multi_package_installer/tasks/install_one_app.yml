@@ -1,10 +1,21 @@
 ---
+- name: Install APT package {{ app.name }} from .deb
+  ansible.builtin.apt:
+    deb: "{{ app.deb }}"
+    state: "{{ app.state | default('present') }}"
+  become: true
+  when:
+    - app.type == 'apt'
+    - app.deb is defined
+
 - name: Install APT package {{ app.name }}
   ansible.builtin.apt:
     name: "{{ app.name }}"
     state: "{{ app.state | default('present') }}"
   become: true
-  when: app.type == 'apt'
+  when:
+    - app.type == 'apt'
+    - app.deb is not defined
 
 - name: Install SNAP package {{ app.name }}
   community.general.snap:

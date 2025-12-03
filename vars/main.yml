@@ -14,6 +14,12 @@ default_apps_groups:
         vars:
           terminator_config: "{{ terminator.config | default([]) }}"
   
+  files-management:
+    apps:
+      - name: TagSpaces
+        type: apt
+        deb: https://github.com/tagspaces/tagspaces/releases/download/v6.7.3/tagspaces-linux-amd64-6.7.3.deb
+
   dev:
     description: "Outils de développement"
     apps:
