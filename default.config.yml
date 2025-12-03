@@ -1,8 +1,5 @@
 ---
-nvm:
-  install: true
 terminator:
-  install: true
   config:
     global_config:
       inactive_color_offset: 0.7
@@ -11,10 +8,12 @@ terminator:
         visible_bell: True
         scrollback_infinite: True
         # scrollback_lines: 5000
-flatpak:
-  install: true
-  apps_to_install:
-    - com.vscodium.codium
-    - com.jetbrains.IntelliJ-IDEA-Ultimate
-    - com.bambulab.BambuStudio
-    - org.deskflow.deskflow
+
+excluded_apps_groups:
+  - media
+
+my_apps_groups:
+  addon:
+    apps:
+      - name: filezilla
+        type: apt

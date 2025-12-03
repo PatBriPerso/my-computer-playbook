@@ -1,0 +1,41 @@
+---
+- name: Install APT package {{ app.name }}
+  ansible.builtin.apt:
+    name: "{{ app.name }}"
+    state: "{{ app.state | default('present') }}"
+  become: true
+  when: app.type == 'apt'
+
+- name: Install SNAP package {{ app.name }}
+  community.general.snap:
+    name: "{{ app.name }}"
+    channel: "{{ app.channel | default('stable') }}"
+    classic: "{{ app.classic | default(false) }}"
+  when: app.type == 'snap'
+
+- name: Install Flatpak package {{ app.name }}
+  community.general.flatpak:
+    name: "{{ app.name }}"
+    remote: "{{ app.remote | default('flathub') }}"
+  when: app.type == 'flatpak'
+
+# The syntax below DOES NOT work!
+# "vars:" cannot be defined like this (you should list each variable) 
+# See: https://github.com/ansible/ansible/issues/19084#issuecomment-467586109
+# - name: Include Ansible role for {{ app.name }}
+#   ansible.builtin.include_role:
+#     name: "{{ app.role }}"
+#   vars: "{{ app.vars | default({}) }}"
+#   when: app.type == 'role'
+
+- name: Include Ansible role for {{ app.name }}
+  ansible.builtin.include_role:
+    name: ansible-role-loop
+    apply:
+      become: "{{ app.become | default(false) }}"
+  vars: 
+    loop_prefix: "{{ loop_role | lower | regex_replace('[-/.]', '_') ~ '_' }}"
+    loop_role: "{{ app.role }}"
+    loop_items:
+      - "{{ app.vars | default({}) }}"
+  when: app.type == 'role'

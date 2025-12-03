@@ -1,0 +1,6 @@
+---
+- name: Install apps for group {{ group.key }}
+  ansible.builtin.include_tasks: install_one_app.yml
+  loop: "{{ group.value.apps }}"
+  loop_control:
+    loop_var: app

@@ -1,0 +1,50 @@
+default_apps_groups:
+  essential:
+    description: "Recommanded system tools"
+    apps:
+      - name: htop
+        type: apt
+      - name: curl
+        type: apt
+      - name: wget
+        type: apt        
+      - name: terminator
+        type: role
+        role: patbriperso.terminator
+        vars:
+          terminator_config: "{{ terminator.config | default([]) }}"
+  
+  dev:
+    description: "Outils de développement"
+    apps:
+      - name: com.vscodium.codium
+        type: flatpak
+
+      - name: com.jetbrains.IntelliJ-IDEA-Ultimate
+        type: flatpak
+
+      - name: git
+        type: apt
+
+      - name: NVM
+        type: role
+        role: morgangraphics.ansible_role_nvm
+        vars:
+          autocomplete: true
+  
+  devops:
+    description: "Tools for DevOps operation"
+    apps:
+      - name: docker
+        type: role
+        role: geerlingguy.docker
+
+  media:
+    description: "Applications multimédia"
+    apps:
+      - name: org.videolan.VLC
+        type: flatpak
+        remote: flathub
+
+      - name: gimp
+        type: apt

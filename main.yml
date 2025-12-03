@@ -3,6 +3,7 @@
   hosts: all
 
   vars_files:
+    - vars/main.yml
     - default.config.yml
 
   pre_tasks:
@@ -17,35 +18,10 @@
       ansible.builtin.debug:
         msg: "The current OS is {{ ansible_os_family }} - {{ ansible_distribution }} - {{ ansible_distribution_version }} - {{ ansible_distribution_file_path }}"
 
-    - name: Install Terminator
-      tags: ['terminator']
-      when: terminator.install | bool
+    - name: Install Apps Groups
+      tags: ['groups']
       ansible.builtin.import_role:
-        name: patbriperso.terminator
+        name: patbriperso.multi_package_installer
       vars:
-        terminator_config: "{{ terminator.config | default([]) }}"
+        apps_groups: "{{ default_apps_groups | combine(my_apps_groups | default({}), recursive=True) }}"
 
-    - name: Install NVM
-      tags: ['nvm']
-      when: nvm.install | bool
-      ansible.builtin.include_role:
-        name: morgangraphics.ansible_role_nvm
-      vars:
-        autocomplete: true
-
-    - name: Install Docker
-      tags: ['docker']
-      become: true
-      block:
-        - name: Install Docker
-          ansible.builtin.include_role:
-            name: geerlingguy.docker
-
-    - name: Install flatpak with applications
-      tags: ['flatpak']
-      when: flatpak.install | bool
-      ansible.builtin.import_role:
-        name: patbriperso.flatpak
-      vars:
-        apps_to_install: "{{ flatpak.apps_to_install | default([]) }}"
-        apps_to_remove: "{{ flatpak.apps_to_remove | default([]) }}"

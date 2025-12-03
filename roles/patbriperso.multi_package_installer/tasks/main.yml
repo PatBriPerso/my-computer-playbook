@@ -1,0 +1,57 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Set fact if any Snap app exists
+  ansible.builtin.set_fact:
+    snap_needed: >-
+      {{
+        apps_groups
+        | dict2items
+        | map(attribute='value.apps')
+        | sum(start=[])
+        | selectattr('type', 'equalto', 'snap')
+        | list
+        | length > 0
+      }}
+
+- name: Set fact if any Flatpak app exists
+  ansible.builtin.set_fact:
+    flatpak_needed: >-
+      {{
+        apps_groups
+        | dict2items
+        | map(attribute='value.apps')
+        | sum(start=[])
+        | selectattr('type', 'equalto', 'flatpak')
+        | list
+        | length > 0
+      }}
+
+- name: Ensure Snap is installed
+  ansible.builtin.apt:
+    name: snapd
+    state: present
+  become: true
+  when: snap_needed | bool
+
+- name: Ensure Flatpak is installed
+  ansible.builtin.apt:
+    name: flatpak
+    state: present
+  become: true
+  when: flatpak_needed | bool
+
+- name: "Skipping excluded group {{ group.key }}"
+  debug:
+    msg: "Group {{ group.key }} is excluded from installation."
+  loop: "{{ apps_groups | dict2items }}"
+  loop_control:
+    loop_var: group
+  when: group.key in (excluded_apps_groups | default([], true))
+
+- name: Loop over apps groups
+  ansible.builtin.include_tasks: install_apps.yml
+  loop: "{{ apps_groups | dict2items }}"
+  loop_control:
+    loop_var: group
+  when: group.key not in (excluded_apps_groups | default([], true))
+

@@ -1,0 +1,30 @@
+#SPDX-License-Identifier: MIT-0
+---
+apps_groups:
+  dev:
+    description: "Outils de développement"
+    apps:
+      - name: code
+        type: snap
+        channel: stable
+        classic: true
+
+      - name: git
+        type: apt
+        state: present
+
+      - name: nodejs
+        type: role
+        role: geerlingguy.nodejs
+        vars:
+          nodejs_version: "20"
+
+  media:
+    description: "Applications multimédia"
+    apps:
+      - name: vlc
+        type: flatpak
+        remote: flathub
+
+      - name: gimp
+        type: apt
