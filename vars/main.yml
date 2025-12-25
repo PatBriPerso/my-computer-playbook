@@ -27,8 +27,10 @@ default_apps_groups:
   dev:
     description: "Outils de développement"
     apps:
-      - name: com.vscodium.codium
-        type: flatpak
+      - name: codium
+        type: snap
+        classic: true
+        become: true
 
       - name: com.jetbrains.IntelliJ-IDEA-Ultimate
         type: flatpak

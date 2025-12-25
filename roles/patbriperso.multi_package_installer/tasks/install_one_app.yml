@@ -18,6 +18,7 @@
     - app.deb is not defined
 
 - name: Install SNAP package {{ app.name }}
+  become: "{{ app.become | default(false) }}"
   community.general.snap:
     name: "{{ app.name }}"
     channel: "{{ app.channel | default('stable') }}"
