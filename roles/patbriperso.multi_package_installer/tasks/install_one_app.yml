@@ -1,4 +1,11 @@
 ---
+- name: Validate app type for {{ app.name | default('UNKNOWN') }}
+  ansible.builtin.assert:
+    that:
+      - app.type is defined
+      - app.type in ['apt', 'snap', 'flatpak', 'role']
+    fail_msg: "Invalid app type for '{{ app.name | default('UNKNOWN') }}': type {{ app.type | default('UNDEFINED') }} is not in [apt, snap, flatpak, role]"
+
 - name: Validate APT app {{ app.name }}
   ansible.builtin.assert:
     that:
