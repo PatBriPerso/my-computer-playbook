@@ -20,3 +20,11 @@ my_apps_groups:
 
 sudoers:
   enable: false
+
+battery:
+  enable: true
+  percentage_low: 30
+  percentage_critical: 10
+  percentage_action: 5
+  # Possible values are: PowerOff, Hibernate, HybridSleep
+  critical_power_action: HybridSleep

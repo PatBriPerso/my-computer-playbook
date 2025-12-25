@@ -28,3 +28,6 @@
       vars:
         apps_groups: "{{ default_apps_groups | combine(my_apps_groups | default({}), recursive=True) }}"
 
+    - import_tasks: tasks/battery-levels.yml
+      tags: ['battery']
+      when: battery.enable

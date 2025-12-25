@@ -1,0 +1,13 @@
+---
+- name: Set battery levels settings
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/UPower/UPower.conf
+    regexp: '^{{ item.key }}='
+    line: '{{ item.key }}={{ item.value }}'
+  loop:
+    - { key: 'UsePercentageForPolicy', value: 'true' }
+    - { key: 'PercentageLow', value: '{{ battery.percentage_low }}' }
+    - { key: 'PercentageCritical', value: '{{ battery.percentage_critical }}' }
+    - { key: 'PercentageAction', value: '{{ battery.percentage_action }}' }
+    - { key: 'CriticalPowerAction', value: '{{ battery.critical_power_action }}' }
