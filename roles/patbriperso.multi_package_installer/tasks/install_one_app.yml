@@ -1,4 +1,11 @@
 ---
+- name: Validate APT app {{ app.name }}
+  ansible.builtin.assert:
+    that:
+      - app.keys() | difference(['name', 'type', 'state', 'deb']) | length == 0
+    fail_msg: "Invalid keys for APT app '{{ app.name }}': {{ app.keys() | difference(['name', 'type', 'state', 'deb']) }}"
+  when: app.type == 'apt'
+
 - name: Install APT package {{ app.name }} from .deb
   ansible.builtin.apt:
     deb: "{{ app.deb }}"
@@ -17,6 +24,13 @@
     - app.type == 'apt'
     - app.deb is not defined
 
+- name: Validate SNAP app {{ app.name }}
+  ansible.builtin.assert:
+    that:
+      - app.keys() | difference(['name', 'type', 'channel', 'classic', 'become']) | length == 0
+    fail_msg: "Invalid keys for SNAP app '{{ app.name }}': {{ app.keys() | difference(['name', 'type', 'channel', 'classic', 'become']) }}"
+  when: app.type == 'snap'
+
 - name: Install SNAP package {{ app.name }}
   become: "{{ app.become | default(false) }}"
   community.general.snap:
@@ -25,11 +39,25 @@
     classic: "{{ app.classic | default(false) }}"
   when: app.type == 'snap'
 
+- name: Validate Flatpak app {{ app.name }}
+  ansible.builtin.assert:
+    that:
+      - app.keys() | difference(['name', 'type', 'remote']) | length == 0
+    fail_msg: "Invalid keys for Flatpak app '{{ app.name }}': {{ app.keys() | difference(['name', 'type', 'remote']) }}"
+  when: app.type == 'flatpak'
+
 - name: Install Flatpak package {{ app.name }}
   community.general.flatpak:
     name: "{{ app.name }}"
     remote: "{{ app.remote | default('flathub') }}"
   when: app.type == 'flatpak'
+
+- name: Validate role app {{ app.name }}
+  ansible.builtin.assert:
+    that:
+      - app.keys() | difference(['name', 'type', 'role', 'vars', 'become']) | length == 0
+    fail_msg: "Invalid keys for role app '{{ app.name }}': {{ app.keys() | difference(['name', 'type', 'role', 'vars', 'become']) }}"
+  when: app.type == 'role'
 
 # The syntax below DOES NOT work!
 # "vars:" cannot be defined like this (you should list each variable) 
