@@ -1,0 +1,9 @@
+---
+- name: Copy sudoers configuration into place.
+  become: true
+  copy:
+    content: "{{ sudoers.user }} ALL=(ALL) NOPASSWD: ALL"
+    dest: /etc/sudoers.d/{{ sudoers.user }}
+    mode: 0440
+    validate: 'visudo -cf %s'
+

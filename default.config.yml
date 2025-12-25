@@ -17,3 +17,6 @@ my_apps_groups:
     apps:
       - name: filezilla
         type: apt
+
+sudoers:
+  enable: false
