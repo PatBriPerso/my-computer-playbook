@@ -7,13 +7,13 @@ default_apps_groups:
       - name: curl
         type: apt
       - name: wget
-        type: apt        
+        type: apt
       - name: terminator
         type: role
         role: patbriperso.terminator
         vars:
           terminator_config: "{{ terminator.config | default([]) }}"
-  
+
   files-management:
     apps:
       - name: TagSpaces
@@ -41,7 +41,7 @@ default_apps_groups:
         role: morgangraphics.ansible_role_nvm
         vars:
           autocomplete: true
-  
+
   devops:
     description: "Tools for DevOps operation"
     apps:
