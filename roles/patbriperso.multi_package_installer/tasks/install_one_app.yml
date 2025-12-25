@@ -81,7 +81,7 @@
     apply:
       become: "{{ app.become | default(false) }}"
   vars: 
-    loop_prefix: "{{ loop_role | lower | regex_replace('[-/.]', '_') ~ '_' }}"
+    loop_prefix: ""
     loop_role: "{{ app.role }}"
     loop_items:
       - "{{ app.vars | default({}) }}"
