@@ -1,0 +1,3 @@
+sudoers:
+  enable: true
+  user: patrick

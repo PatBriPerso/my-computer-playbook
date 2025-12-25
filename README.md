@@ -37,6 +37,18 @@ pipx install ansible-core==2.18
 Je préfère bloquer la version sur 2.18 pour éviter les problèmes avec des
 montées de version qui casseraient mon playbook.
 
+Installer les rôles et les collections ansible nécessaires :
+```bash
+ansible-galaxy install -r requirements.yml
+```
+
+Créer un fichier de configuration (ou copier celui sauvegardé dans mon
+cloud) :
+```bash
+cp config.example.yml config.yml 
+```
+
+
 
 Pour faire mes tests avec une machine virtuelle Virtual Box, je monte le
 dossier partagé `zorin-playbook` dans `~/dev/zorin-playbook`.
