@@ -40,6 +40,14 @@
   become: true
   when: flatpak_needed | bool
 
+- name: Add the flathub flatpak repository remote to the user installation
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    method: user
+  when: flatpak_needed | bool
+
 - name: "Skipping excluded group {{ group.key }}"
   debug:
     msg: "Group {{ group.key }} is excluded from installation."
