@@ -28,6 +28,15 @@
       vars:
         apps_groups: "{{ default_apps_groups | combine(my_apps_groups | default({}), recursive=True) }}"
 
+    - name: Install managed configuration
+      tags: ['configuration']
+      ansible.builtin.import_role:
+        name: patbriperso.managed_configs
+      vars:
+        managed_configs_root: "{{ managed_configs.root | default('') }}"
+        managed_configs_links: "{{ managed_configs.links | default([]) }}"
+        managed_configs_backup: "{{ managed_configs.backup | default(true) }}"
+
     - import_tasks: tasks/battery-levels.yml
       tags: ['battery']
       when: battery.enable

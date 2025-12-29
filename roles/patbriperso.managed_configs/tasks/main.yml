@@ -1,0 +1,5 @@
+- name: "Create managed configuration symlinks"
+  ansible.builtin.include_tasks: link.yml
+  loop: "{{ managed_configs_links }}"
+  loop_control:
+    label: "{{ item.dest }}"

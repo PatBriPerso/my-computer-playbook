@@ -1,0 +1,9 @@
+---
+# Root directory where encrypted / synced configuration files are stored
+managed_configs_root: ""
+
+# List of configuration files or directories to expose via symlinks
+managed_configs_links: []
+
+# Enable backup if destination already exists
+managed_configs_backup: true
