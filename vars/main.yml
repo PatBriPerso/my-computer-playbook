@@ -50,6 +50,7 @@ default_apps_groups:
       - name: docker
         type: role
         role: geerlingguy.docker
+        become: true
 
   media:
     description: "Applications multimédia"
