@@ -1,0 +1,11 @@
+- name: Créer le répertoire des scripts
+  ansible.builtin.file:
+    path: "{{ rclone_automation_script_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Déployer toutes les automatisations rclone
+  include_tasks: deploy_automation.yml
+  loop: "{{ rclone_automations }}"
+  loop_control:
+    loop_var: automation

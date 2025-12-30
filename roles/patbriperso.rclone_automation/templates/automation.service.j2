@@ -1,0 +1,13 @@
+[Unit]
+Description=Rclone {{ automation.name }}
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart={{ rclone_automation_script_dir }}/{{ automation.name }}.sh --apply
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+StandardOutput=null
+StandardError=null

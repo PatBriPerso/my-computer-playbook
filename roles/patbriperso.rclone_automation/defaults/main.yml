@@ -1,0 +1,46 @@
+---
+rclone_automation_user: "{{ ansible_user_id }}"
+rclone_automation_bin: "/usr/local/bin/rclone"
+rclone_automation_script_dir: "{{ ansible_env.HOME }}/bin/rclone_automation"
+rclone_automation_timer_defaults:
+  mode: interval
+  every: "30min"
+rclone_automations: []  # Liste des automatisations
+
+# Exemple de structure d'automatisation par défaut
+# rclone_automations:
+#   - name: "pi_onedrive_backup"
+#     type: "bisync"   # ou "sync", "copy"
+#     source: "/home/pi/data"
+#     destination: "onedrive:Backup"
+#     exclusions: []  # liste de fichiers ou de répertoires à exclure
+#     extra_options: []  # liste d'options rclone à ajouter
+#     with_systemd: false  # Pour ne pas avoir de service ni de timer systemd (true par défaut)
+#     timer:  # Lancement à intervalle régulier 
+
+# Exemples d'exclusions
+# exclusions:
+#   - "node_modules/**"  # Exclure un dossier et son contenu
+#   - "*.log"  # Exclure uniquement les fichiers (pas les dossiers)
+#   - "/.cache/**"  # Exclure un dossier à la racine seulement
+
+# Exemple options extra
+# extra_options:
+#   - "--progress"
+
+# Exemples timer
+# timer:  # Toutes les 20 minutes
+#   mode: interval
+#   every: "20min"
+# timer:  # Tous les jours à 02:00
+#   mode: calendar
+#   on_calendar: "daily 02:00"
+# timer:  # Toutes les semaines le dimanche à 03:30
+#   mode: calendar
+#   on_calendar: "Sun *-*-* 03:30"
+# timer:  # Tous les jours ouvrés à 01:00
+#   mode: calendar
+#   on_calendar: "Mon..Fri 01:00"
+
+# Validation possible des on_calendar avec :
+# systemd-analyze calendar "Mon..Fri 01:00"

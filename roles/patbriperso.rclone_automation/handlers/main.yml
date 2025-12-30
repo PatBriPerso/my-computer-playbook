@@ -1,0 +1,10 @@
+---
+# -------------------------------
+# Handler pour relire systemd
+# -------------------------------
+- name: reload systemd
+  ansible.builtin.systemd:
+    scope: user
+    daemon_reload: yes
+  become: false
+  listen: reload systemd

@@ -1,0 +1,20 @@
+[Unit]
+Description=Run Rclone {{ automation.name }}
+
+[Timer]
+AccuracySec=1min
+
+{% set timer = automation.timer | default(rclone_automation_timer_defaults) %}
+
+{% if timer.mode == "interval" %}
+OnBootSec=5min
+RandomizedDelaySec=5min
+OnUnitActiveSec={{ timer.every }}
+{% elif timer.mode == "calendar" %}
+Persistent=true
+OnCalendar={{ timer.on_calendar }}
+RandomizedDelaySec=30min
+{% endif %}
+
+[Install]
+WantedBy=timers.target

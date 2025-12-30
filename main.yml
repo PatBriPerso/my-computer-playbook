@@ -37,6 +37,14 @@
         managed_configs_links: "{{ managed_configs.links | default([]) }}"
         managed_configs_backup: "{{ managed_configs.backup | default(true) }}"
 
+    - name: Setup rclone automation
+      tags: ['rclone_automation']
+      ansible.builtin.import_role:
+        name: patbriperso.rclone_automation
+      vars:
+        rclone_automation_script_dir: "{{ rclone_automation.script_dir | default(omit) }}"
+        rclone_automations: "{{ rclone_automation.list | default([]) }}"
+
     - import_tasks: tasks/battery-levels.yml
       tags: ['battery']
       when: battery.enable

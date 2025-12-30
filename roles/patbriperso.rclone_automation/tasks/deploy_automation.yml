@@ -1,0 +1,123 @@
+- name: Valider la configuration du timer
+  assert:
+    that:
+      - automation.timer is not defined or automation.timer.mode in ["interval", "calendar"]
+      - automation.timer is not defined or
+        (
+          (automation.timer.mode == "interval" and automation.timer.every is defined) or
+          (automation.timer.mode == "calendar" and automation.timer.on_calendar is defined)
+        )
+    fail_msg: >
+      Configuration du timer invalide pour {{ automation.name }}.
+      Utiliser soit:
+        timer:
+          mode: interval
+          every: 30min
+      soit:
+        timer:
+          mode: calendar
+          on_calendar: "daily 02:00"
+
+- name: Déployer le script rclone
+  ansible.builtin.template:
+    src: automation.sh.j2
+    dest: "{{ rclone_automation_script_dir }}/{{ automation.name }}.sh"
+    mode: '0755'
+    owner: "{{ rclone_automation_user }}"
+    group: "{{ rclone_automation_user }}"
+
+# -------------------------------
+# Création du service et timer
+# -------------------------------
+- name: Définie les noms du service et du timer ainsi que le dossier où ils seront
+  set_fact:
+    systemd_path: "{{ ansible_env.HOME }}/.config/systemd/user"
+    service_name: "{{ automation.name }}.service"
+    timer_name: "{{ automation.name }}.timer"
+
+- name: Définie les noms de fichiers du service et du timer
+  set_fact:
+    service_file: "{{ systemd_path }}/{{ service_name }}"
+    timer_file: "{{ systemd_path }}/{{ timer_name }}"
+
+- name: Vérifie si le service et le timer existent
+  set_fact:
+    service_exists: "{{ lookup('file', service_file, errors='ignore') is not none }}"
+    timer_exists: "{{ lookup('file', timer_file, errors='ignore') is not none }}"
+
+- name: Créer le répertoire systemd
+  ansible.builtin.file:
+    path: "{{ systemd_path }}"
+    state: directory
+    mode: '0755'
+  when: automation.with_systemd | default(true)
+
+- name: Déployer le service systemd
+  ansible.builtin.template:
+    src: automation.service.j2
+    dest: "{{ service_file }}"
+    owner: "{{ rclone_automation_user }}"
+    group: "{{ rclone_automation_user }}"
+    mode: '0644'
+  when: automation.with_systemd | default(true)
+
+- name: Déployer le timer systemd
+  ansible.builtin.template:
+    src: automation.timer.j2
+    dest: "{{ timer_file }}"
+    owner: "{{ rclone_automation_user }}"
+    group: "{{ rclone_automation_user }}"
+    mode: '0644'
+  when: automation.with_systemd | default(true)
+
+- name: Activer et démarrer le timer
+  ansible.builtin.systemd:
+    name: "{{ timer_name }}"
+    enabled: yes
+    state: started
+    scope: user
+    daemon_reload: yes
+  become: false
+  when: automation.with_systemd | default(true)
+
+# -------------------------------
+# Suppression du service et timer
+# -------------------------------
+- name: Stop et désactive le timer
+  ansible.builtin.systemd:
+    name: "{{ timer_name }}"
+    enabled: no
+    state: stopped
+    scope: user
+  when:
+    - automation.with_systemd is defined
+    - automation.with_systemd == false
+    - timer_exists
+  notify: reload systemd
+
+- name: Stop et désactive le service
+  ansible.builtin.systemd:
+    name: "{{ service_name }}"
+    enabled: no
+    state: stopped
+    scope: user
+  when:
+    - automation.with_systemd is defined
+    - automation.with_systemd == false
+    - service_exists
+  ignore_errors: yes
+  notify: reload systemd
+
+- name: Supprime le timer
+  ansible.builtin.file:
+    path: "{{ timer_file }}"
+    state: absent
+  when: automation.with_systemd is defined and automation.with_systemd == false
+  notify: reload systemd
+
+- name: Supprime le service
+  ansible.builtin.file:
+    path: "{{ service_file }}"
+    state: absent
+  when: automation.with_systemd is defined and automation.with_systemd == false
+  notify: reload systemd

@@ -1,0 +1,268 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+#######################################
+# CONFIGURATION
+#######################################
+
+NAME="{{ automation.name }}"
+TYPE="{{ automation.type }}"
+SOURCE="{{ automation.source }}"
+DEST="{{ automation.destination }}"
+
+RCLONE_BIN="{{ rclone_automation_bin }}"
+
+LOG_DIR="{{ ansible_env.HOME }}/.cache/rclone"
+TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+LOG_FILE="$LOG_DIR/$NAME-$TIMESTAMP.log"
+
+#######################################
+# OPTIONS PAR DÉFAUT
+#######################################
+
+DRY_RUN=true
+DRY_RUN_TEXT=""
+SHOW_PROGRESS=true
+INIT=false
+
+#######################################
+# PARSE DES ARGUMENTS
+#######################################
+
+usage() {
+  cat <<EOF
+Usage: $0 [options]
+
+Options:
+  --apply        Exécute réellement la synchronisation (désactive --dry-run)
+  --init         Initialise bisync (équivalent --resync)
+  --no-progress   Désactive l'affichage de la progression
+  -h, --help     Affiche cette aide
+
+Par défaut, le script s'exécute en --dry-run avec affichage de la progression.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --apply) DRY_RUN=false ;;
+    --init) INIT=true ;;
+    --no-progress) SHOW_PROGRESS=false ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unknown option: $1"; usage; exit 1 ;;
+  esac
+  shift
+done
+
+#######################################
+# PRÉPARATION
+#######################################
+
+mkdir -p "$LOG_DIR"
+
+# Options de base
+RCLONE_OPTS=(
+  "$TYPE"
+  "$SOURCE"
+  "$DEST"
+  --log-file "$LOG_FILE"
+  --log-level INFO
+  --metadata
+  --fix-case
+  --fast-list
+)
+
+{% if automation.exclusions is defined and automation.exclusions | length > 0 %}
+# Exclusions
+RCLONE_OPTS+=(
+{% for pattern in automation.exclusions %}
+  --exclude "{{ pattern }}"
+{% endfor %}
+)
+{% endif %}
+
+{% if automation.extra_options is defined and automation.extra_options | length > 0 %}
+# Options rclone supplémentaires
+RCLONE_OPTS+=(
+{% for opt in automation.extra_options %}
+  {{ opt | quote }}
+{% endfor %}
+)
+{% endif %}
+
+{% if automation.type == "sync" %}
+# Paramètres supplémentaires pour sync
+RCLONE_OPTS+=(
+  --create-empty-src-dirs
+)
+{% endif %}
+
+{% if automation.type == "bisync" %}
+# Paramètres supplémentaires pour bisync
+RCLONE_OPTS+=(
+  --create-empty-src-dirs
+  --compare size,modtime,checksum
+  --slow-hash-sync-only
+  --resilient
+)
+{% endif %}
+
+if [[ "$INIT" == true ]]; then
+  RCLONE_OPTS+=(--resync)
+fi
+
+if [[ "$DRY_RUN" == true ]]; then
+  RCLONE_OPTS+=(--dry-run)
+  DRY_RUN_TEXT="(dry-run)"
+fi
+
+if [[ "$SHOW_PROGRESS" == true ]]; then
+  RCLONE_OPTS+=(--progress)
+fi
+
+#######################################
+# NETTOYAGE DES LOGS (> 30 jours)
+#######################################
+
+find "$LOG_DIR" -type f -name "automation-*.log" -mtime +30 -delete
+
+#######################################
+# LIEN VERS DERNIER LOG
+#######################################
+
+touch "$LOG_FILE"
+ln -sf "$LOG_FILE" "$LOG_DIR/$NAME-latest.log"
+
+#######################################
+# INFO AVANT EXÉCUTION
+#######################################
+
+echo "======================================"
+echo "$NAME"
+echo "Type  : $TYPE"
+echo "Source: $SOURCE"
+echo "Dest  : $DEST"
+echo "Init  : $INIT"
+echo "DryRun: $DRY_RUN"
+echo "Log   : $LOG_FILE"
+{% if automation.exclusions is defined and automation.exclusions | length > 0 %}
+echo "Exclusions:"
+{% for pattern in automation.exclusions %}
+echo "  - {{ pattern }}"
+{% endfor %}
+{% endif %}
+{% if automation.extra_options is defined and automation.extra_options | length > 0 %}
+echo "Options rclone supplémentaires:"
+{% for opt in automation.extra_options %}
+echo "  {{ opt | quote }}"
+{% endfor %}
+{% endif %}
+echo "======================================"
+
+#######################################
+# EXÉCUTION
+#######################################
+
+set +e
+"$RCLONE_BIN" "${RCLONE_OPTS[@]}"
+RCLONE_RC=$?
+set -e
+
+#######################################
+# DÉTECTION DES NOTIFICATIONS
+#######################################
+
+NOTIFY_AVAILABLE=true
+
+if ! command -v notify-send >/dev/null 2>&1; then
+  NOTIFY_AVAILABLE=false
+fi
+
+if [[ "$NOTIFY_AVAILABLE" == false ]]; then
+  echo "======================================"
+  echo "⚠️  notify-send n'est pas installé."
+  echo "Pour activer les notifications : sudo apt install libnotify-bin"
+  echo "======================================"
+fi
+
+#######################################
+# NOTIFICATION ERREUR
+#######################################
+
+if (( RCLONE_RC != 0 )); then
+  if [[ "$NOTIFY_AVAILABLE" == true ]]; then
+    ACTION=$(notify-send \
+      -u critical \
+      --wait \
+      --action="open=Ouvrir le log" \
+      "❌ $NAME – ERREUR $DRY_RUN_TEXT" \
+      "La synchronisation a échoué (code $RCLONE_RC). Voir $LOG_FILE"
+    )
+
+    case "$ACTION" in
+      open)
+        xdg-open "$LOG_FILE"
+        ;;
+    esac
+  else
+    echo "======================================"
+    echo "La synchronisation a échoué (code $RCLONE_RC). $DRY_RUN_TEXT"
+    echo "Log: $LOG_FILE"
+    echo "======================================"
+  fi
+fi
+
+#######################################
+# NOTIFICATION (SI CHANGEMENTS)
+#######################################
+
+# Valeurs par défaut
+TRANSFERRED=0
+DELETED=0
+RENAMED=0
+ELAPSED=""
+
+# Exemples de lignes attendues :
+# Transferred:            6 / 6, 100%
+# Deleted:                2 (files), 0 (dirs), 74 B (freed)
+# Renamed:                2
+# Elapsed time:      2m24.5s
+
+# Transferred (nombre de fichiers)
+if grep -q "^Transferred:" "$LOG_FILE"; then
+  TRANSFERRED=$(grep "^Transferred:" "$LOG_FILE" | tail -n 1 | awk '{print $2}')
+fi
+
+# Deleted (fichiers uniquement)
+if grep -q "^Deleted:" "$LOG_FILE"; then
+  DELETED=$(grep "^Deleted:" "$LOG_FILE" | tail -n 1 | awk '{print $2}')
+fi
+
+# Renamed
+if grep -q "^Renamed:" "$LOG_FILE"; then
+  RENAMED=$(grep "^Renamed:" "$LOG_FILE" | tail -n 1 | awk '{print $2}')
+fi
+
+# Elapsed time
+if grep -q "^Elapsed time:" "$LOG_FILE"; then
+  ELAPSED=$(grep "^Elapsed time:" "$LOG_FILE" | tail -n 1 | sed 's/Elapsed time:[[:space:]]*//')
+fi
+
+TOTAL=$((TRANSFERRED + DELETED + RENAMED))
+
+if (( TOTAL > 0 )); then
+  if [[ "$NOTIFY_AVAILABLE" == true ]]; then
+    notify-send \
+      "$NAME terminée $DRY_RUN_TEXT" \
+      "⏱ Durée : $ELAPSED  |  📤 Transférés : $TRANSFERRED  |  🗑 Supprimés : $DELETED  |  🔁 Renommés : $RENAMED"
+  else
+    echo "======================================"
+    echo "$NAME terminée $DRY_RUN_TEXT"
+    echo "Durée : $ELAPSED"
+    echo "Transférés : $TRANSFERRED"
+    echo "Supprimés : $DELETED"
+    echo "Renommés : $RENAMED"
+    echo "======================================"
+  fi
+fi
+
