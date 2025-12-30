@@ -22,6 +22,55 @@ Ajouter patrick au groupe sudo :
 Il faut ré-ouvrir la session de patrick pour que le changement soit pris en compte
 (ou rebooter la machine).
 
+Installer rclone :
+```bash
+sudo apt-get update && sudo apt-get install curl -y
+curl https://rclone.org/install.sh | sudo bash
+```
+
+Ajouter OneDrive à rclone :
+```bash
+rclone config create onedrive onedrive 
+```
+NOTA : nécessite de me connecter à mon compte Microsoft
+
+Récupérer mes configurations linux (cryptées) :
+```bash
+mkdir -p ~/data/cloud/OneDrive/secure.enc
+rclone copy onedrive:secure.enc ~/data/cloud/OneDrive/secure.enc
+```
+
+Décrypter mes configurations linux :
+```bash
+sudo apt-get install gocryptfs -y
+mkdir -p ~/data/secure.clear
+gocryptfs ~/data/cloud/OneDrive/secure.enc ~/data/secure.clear
+```
+NOTA : nécessite le mot de passe démandé par gocryptfs
+
+Récupération de ma conf SSH :
+```bash
+chmod 700 ~/data/secure.clear/ssh
+chmod 600 ~/data/secure.clear/ssh/*
+rmdir ~/.ssh
+ln -s ~/data/secure.clear/ssh ~/.ssh
+```
+
+Récupération de cette repo :
+```bash
+sudo apt-get install git -y
+mkdir ~/dev
+cd ~/dev
+git clone git@github.com:PatBriPerso/my-computer-playbook.git
+```
+
+Récupération de la configuration pour mon PC de dev :
+```bash
+cd ~/dev/my-computer-playbook
+cp ~/data/secure.clear/work-computer.config.yml config.yml
+```
+
+
 Installer pipx :
 ```bash
 sudo apt-get update
