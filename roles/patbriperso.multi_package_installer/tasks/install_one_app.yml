@@ -3,9 +3,12 @@
   ansible.builtin.assert:
     that:
       - app.type is defined
-      - app.type in ['apt', 'snap', 'flatpak', 'role']
-    fail_msg: "Invalid app type for '{{ app.name | default('UNKNOWN') }}': type {{ app.type | default('UNDEFINED') }} is not in [apt, snap, flatpak, role]"
+      - app.type in ['apt', 'snap', 'flatpak', 'role', 'cmd']
+    fail_msg: "Invalid app type for '{{ app.name | default('UNKNOWN') }}': type {{ app.type | default('UNDEFINED') }} is not in [apt, snap, flatpak, role, cmd]"
 
+# --------------------
+# APT
+# --------------------
 - name: Validate APT app {{ app.name }}
   ansible.builtin.assert:
     that:
@@ -31,6 +34,9 @@
     - app.type == 'apt'
     - app.deb is not defined
 
+# --------------------
+# SNAP
+# --------------------
 - name: Validate SNAP app {{ app.name }}
   ansible.builtin.assert:
     that:
@@ -46,6 +52,9 @@
     classic: "{{ app.classic | default(false) }}"
   when: app.type == 'snap'
 
+# --------------------
+# FLATPAK
+# --------------------
 - name: Validate Flatpak app {{ app.name }}
   ansible.builtin.assert:
     that:
@@ -59,6 +68,9 @@
     remote: "{{ app.remote | default('flathub') }}"
   when: app.type == 'flatpak'
 
+# --------------------
+# ROLE
+# --------------------
 - name: Validate role app {{ app.name }}
   ansible.builtin.assert:
     that:
@@ -86,3 +98,22 @@
     loop_items:
       - "{{ app.vars | default({}) }}"
   when: app.type == 'role'
+
+# --------------------
+# CMD
+# --------------------
+- name: Validate CMD app {{ app.name }}
+  ansible.builtin.assert:
+    that:
+      - app.cmd is defined
+      - app.keys() | difference(['name', 'type', 'cmd', 'creates', 'executable', 'become']) | length == 0
+    fail_msg: "Invalid keys for CMD app '{{ app.name }}': {{ app.keys() | difference(['name', 'type', 'cmd', 'creates', 'become']) }}"
+  when: app.type == 'cmd'
+
+- name: Install CMD app {{ app.name }}
+  ansible.builtin.shell: "{{ app.cmd }}"
+  args:
+    creates: "{{ app.creates | default(omit) }}"
+    executable: "{{ app.executable | default('/bin/bash') }}"
+  become: "{{ app.become | default(false) }}"
+  when: app.type == 'cmd'
