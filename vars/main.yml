@@ -54,6 +54,19 @@ default_apps_groups:
         vars:
           autocomplete: true
 
+      - name: mariadb-server
+        type: apt
+
+      - name: Towerify CLI
+        type: cmd
+        cmd: |
+          curl -sL https://cli.towerify.io/install.sh -o install.sh
+          chmod +x install.sh
+          ./install.sh
+          rm ./install.sh
+        creates: "{{ ansible_env.HOME }}/.towerify/towerify"
+
+
   devops:
     description: "Tools for DevOps operation"
     apps:
