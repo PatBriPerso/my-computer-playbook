@@ -1,0 +1,28 @@
+- name: Create systemd user directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/systemd/user"
+    state: directory
+    mode: "0700"
+
+- name: Create gocryptfs config directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/gocryptfs"
+    state: directory
+    mode: "0700"
+
+- name: Install gocryptfs user services
+  ansible.builtin.template:
+    src: gocryptfs-user.service.j2
+    dest: "{{ ansible_env.HOME }}/.config/systemd/user/gocryptfs-{{ item.name }}.service"
+    mode: "0644"
+  loop: "{{ gocryptfs_mounts }}"
+  notify: reload systemd
+
+- name: Enable and start gocryptfs user services
+  ansible.builtin.systemd:
+    name: "gocryptfs-{{ item.name }}"
+    scope: user
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  loop: "{{ gocryptfs_mounts }}"

@@ -28,6 +28,13 @@
       vars:
         apps_groups: "{{ default_apps_groups | combine(my_apps_groups | default({}), recursive=True) }}"
 
+    - name: Install gocryptfs and mounts
+      tags: ['gocryptfs']
+      ansible.builtin.import_role:
+        name: patbriperso.gocryptfs_user_mounts
+      vars:
+        gocryptfs_mounts: "{{ gocryptfs.mounts | default([]) }}"
+
     - name: Install managed configuration
       tags: ['configuration']
       ansible.builtin.import_role:

@@ -9,7 +9,7 @@
 - name: Ensure configuration directory exists
   tags: ['configure']
   ansible.builtin.file:
-    path: ~/.config/terminator
+    path: "{{ ansible_env.HOME }}/.config/terminator"
     state: directory
     mode: '0755'
 
@@ -17,4 +17,4 @@
   tags: ['configure']
   ansible.builtin.template:
     src: terminator_config.j2
-    dest: ~/.config/terminator/config
+    dest: "{{ ansible_env.HOME }}/.config/terminator/config"

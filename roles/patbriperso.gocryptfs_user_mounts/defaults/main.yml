@@ -1,0 +1,8 @@
+gocryptfs_mounts: []
+
+# Exemple :
+# gocryptfs_mounts:
+#   - name: onedrive_secure
+#     encrypted_dir: "{{ ansible_env.HOME }}/data/cloud/OneDrive/secure.enc"
+#     clear_dir: "{{ ansible_env.HOME }}/data/secure.clear"
+#     password_file: "{{ ansible_env.HOME }}/.config/gocryptfs/onedrive.pass"

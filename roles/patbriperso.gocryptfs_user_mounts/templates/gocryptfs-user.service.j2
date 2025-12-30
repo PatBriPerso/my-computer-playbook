@@ -1,0 +1,21 @@
+[Unit]
+Description=Gocryptfs mount {{ item.name }}
+After=default.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=forking
+
+ExecStartPre=/bin/sh -c "if [ ! -f {{ item.password_file }} ]; then echo 'Gocryptfs password file missing: {{ item.password_file }}' >&2; /usr/bin/notify-send 'Gocryptfs mount {{ item.name }}' 'Password file missing: {{ item.password_file }}' || true; exit 1; fi"
+ExecStart=/usr/bin/gocryptfs \
+  -passfile {{ item.password_file }} \
+  {{ item.encrypted_dir }} \
+  {{ item.clear_dir }}
+ExecStop=/bin/fusermount -u {{ item.clear_dir }}
+
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target
