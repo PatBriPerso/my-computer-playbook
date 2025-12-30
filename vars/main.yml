@@ -13,6 +13,16 @@ default_apps_groups:
         role: patbriperso.terminator
         vars:
           terminator_config: "{{ terminator.config | default([]) }}"
+      - name: filezilla
+        type: apt
+      - name: resh
+        type: cmd
+        cmd: |
+          curl -fsSL https://raw.githubusercontent.com/curusarn/resh/master/scripts/rawinstall.sh -o install.sh
+          chmod +x install.sh
+          ./install.sh
+          rm ./install.sh
+        creates: "{{ ansible_env.HOME }}/.resh/bin/resh-cli"
 
   files-management:
     apps:
