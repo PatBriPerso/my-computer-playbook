@@ -9,14 +9,14 @@ terminator:
         scrollback_infinite: True
         # scrollback_lines: 5000
 
-excluded_apps_groups:
-  - media
+# excluded_apps_groups:
+#   - media
 
-my_apps_groups:
-  addon:
-    apps:
-      - name: filezilla
-        type: apt
+# my_apps_groups:
+#   addon:
+#     apps:
+#       - name: filezilla
+#         type: apt
 
 sudoers:
   enable: false
