@@ -10,10 +10,8 @@ Reste à ajouter aux installations :
 - Chrome ?
 - Chromium ?
 - Opera ?
-- Slack
 - Remmina
 - Synology Assistant
-- Spotify
 - Calibre
 - draw.io
 - balenaEtcher
@@ -35,3 +33,16 @@ https://help.prusa3d.com/fr/article/installer-prusaslicer_1903#linux-y-compris-c
 ```bash
 flatpak install flathub com.prusa3d.PrusaSlicer
 ```
+
+### Slack
+
+Sur cette page : https://slack.com/intl/fr-fr/downloads/linux
+le site de Slack propose d'installer Slack en utilisant snap.
+
+Le package snap est celui-ci : https://snapcraft.io/slack
+
+### Spotify
+
+Une des possibilités pour installer Spotify et snap.
+Voir https://www.spotify.com/fr/download/linux/
+

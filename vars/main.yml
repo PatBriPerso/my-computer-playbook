@@ -34,6 +34,13 @@ default_apps_groups:
         role: stefangweichinger.ansible_rclone
         become: true
 
+  comm:
+    description: "Communication"
+    apps:
+      - name: slack
+        type: snap
+        become: true
+
   dev:
     description: "Outils de développement"
     apps:
@@ -84,3 +91,7 @@ default_apps_groups:
 
       - name: gimp
         type: apt
+
+      - name: spotify
+        type: snap
+        become: true
