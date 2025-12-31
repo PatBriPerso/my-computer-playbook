@@ -50,10 +50,10 @@ NOTA : nécessite le mot de passe démandé par gocryptfs
 
 Récupération de ma conf SSH :
 ```bash
-chmod 700 ~/data/secure.clear/ssh
-chmod 600 ~/data/secure.clear/ssh/*
+chmod 700 ~/data/secure.clear/linux.conf/ssh
+chmod 600 ~/data/secure.clear/linux.conf/ssh/*
 rmdir ~/.ssh
-ln -s ~/data/secure.clear/ssh ~/.ssh
+ln -s ~/data/secure.clear/linux.conf/ssh ~/.ssh
 ```
 
 Récupération de cette repo :
@@ -67,7 +67,7 @@ git clone git@github.com:PatBriPerso/my-computer-playbook.git
 Récupération de la configuration pour mon PC de dev :
 ```bash
 cd ~/dev/my-computer-playbook
-cp ~/data/secure.clear/work-computer.config.yml config.yml
+cp ~/data/secure.clear/linux.conf/work-computer.config.yml config.yml
 ```
 
 
