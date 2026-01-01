@@ -1,0 +1,7 @@
+---
+- name: Add VirtualBox repository to sources.list.d
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/virtualbox.list
+    line: "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian {{ ansible_lsb.codename }} contrib"
+    create: yes
+  become: true

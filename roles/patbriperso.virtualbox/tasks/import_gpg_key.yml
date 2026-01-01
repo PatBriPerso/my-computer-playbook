@@ -1,0 +1,58 @@
+---
+#############################
+# VirtualBox 2016 GPG key
+#############################
+- name: Check if the VirtualBox 2016 GPG key is already imported
+  stat:
+    path: /etc/apt/trusted.gpg.d/vbox.gpg
+  register: vbox_key_stat
+
+- name: Download the VirtualBox 2016 GPG key if not already present
+  ansible.builtin.get_url:
+    url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
+    dest: /tmp/oracle_vbox_2016.asc
+    mode: '0644'
+  when: vbox_key_stat.stat.exists == false
+  register: download_result
+
+- name: Import the VirtualBox 2016 GPG key
+  ansible.builtin.command: 
+    cmd: "gpg --dearmor -o /etc/apt/trusted.gpg.d/vbox.gpg /tmp/oracle_vbox_2016.asc"
+  args:
+    creates: "/etc/apt/trusted.gpg.d/vbox.gpg"
+  become: true
+
+- name: Clean up the downloaded 2016 GPG key
+  ansible.builtin.file:
+    path: /tmp/oracle_vbox_2016.asc
+    state: absent
+  when: download_result.changed == true
+
+#############################
+# VirtualBox GPG key
+#############################
+- name: Check if the VirtualBox GPG key is already imported
+  stat:
+    path: /etc/apt/trusted.gpg.d/oracle_vbox.gpg
+  register: oracle_vbox_key_stat
+
+- name: Download and add the Oracle VirtualBox GPG key
+  ansible.builtin.get_url:
+    url: https://www.virtualbox.org/download/oracle_vbox.asc
+    dest: /tmp/oracle_vbox.asc
+    mode: '0644'
+  when: vbox_key_stat.stat.exists == false
+  register: download_result
+
+- name: Import the Oracle VirtualBox GPG key
+  ansible.builtin.command: 
+    cmd: "gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox.gpg /tmp/oracle_vbox.asc"
+  args:
+    creates: "/etc/apt/trusted.gpg.d/oracle_vbox.gpg"
+  become: true
+
+- name: Clean up the downloaded GPG key
+  ansible.builtin.file:
+    path: /tmp/oracle_vbox.asc
+    state: absent
+  when: download_result.changed == true

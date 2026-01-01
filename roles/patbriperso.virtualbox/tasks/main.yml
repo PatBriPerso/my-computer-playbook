@@ -1,0 +1,15 @@
+---
+- name: Install dependencies
+  include_tasks: install_dependencies.yml
+
+- name: Import VirtualBox GPG keys
+  include_tasks: import_gpg_key.yml
+
+- name: Configure VirtualBox repository
+  include_tasks: configure_virtualbox_repo.yml
+
+- name: Install VirtualBox
+  include_tasks: install_virtualbox.yml
+
+- name: Install VirtualBox Extension Pack
+  include_tasks: install_extension_pack.yml

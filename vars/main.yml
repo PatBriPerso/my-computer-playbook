@@ -81,6 +81,13 @@ default_apps_groups:
         type: role
         role: geerlingguy.docker
         become: true
+      - name: virtualbox
+        type: role
+        role: patbriperso.virtualbox
+        become: true
+        vars:
+          virtualbox_version: "7.2"
+          virtualbox_extension_version: "7.2.4"
 
   media:
     description: "Applications multimédia"

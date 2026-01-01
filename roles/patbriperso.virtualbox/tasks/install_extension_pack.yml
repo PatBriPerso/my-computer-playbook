@@ -1,0 +1,56 @@
+---
+- name: Check if the Oracle VirtualBox Extension Pack is already installed
+  ansible.builtin.shell: VBoxManage list extpacks | grep -q "Oracle VirtualBox Extension Pack"
+  register: extpack_installed
+  ignore_errors: true
+  changed_when: false
+
+- name: Download the Oracle VirtualBox Extension Pack if not already installed
+  ansible.builtin.get_url:
+    url: "https://download.virtualbox.org/virtualbox/{{ virtualbox_extension_version }}/Oracle_VirtualBox_Extension_Pack-{{ virtualbox_extension_version }}.vbox-extpack"
+    dest: "/tmp/Oracle_VirtualBox_Extension_Pack-{{ virtualbox_extension_version }}.vbox-extpack"
+  when: extpack_installed.rc != 0
+
+- name: Create the directory to extract the extension pack
+  file:
+    path: "/tmp/virtualbox_extension"
+    state: directory
+  when: extpack_installed.rc != 0
+
+- name: Extract the extension pack to get the license file
+  unarchive:
+    src: "/tmp/Oracle_VirtualBox_Extension_Pack-{{ virtualbox_extension_version }}.vbox-extpack"
+    dest: "/tmp/virtualbox_extension/"
+    remote_src: yes
+  become: true
+  when: extpack_installed.rc != 0
+
+- name: Get the SHA256 hash of the license file
+  command: "sha256sum /tmp/virtualbox_extension/ExtPack-license.txt"
+  register: sha256_result
+  become: true
+  when: extpack_installed.rc != 0
+
+- name: Set the SHA256 hash value
+  set_fact:
+    extension_sha256: "{{ sha256_result.stdout.split(' ')[0] }}"
+  when: extpack_installed.rc != 0
+
+- name: Install the Oracle VirtualBox Extension Pack
+  command: "VBoxManage extpack install --replace --accept-license {{ extension_sha256 }} /tmp/Oracle_VirtualBox_Extension_Pack-{{ virtualbox_extension_version }}.vbox-extpack"
+  become: true
+  when: extpack_installed.rc != 0
+
+- name: Clean up the downloaded Extension Pack file and extracted content
+  file:
+    path: "/tmp/Oracle_VirtualBox_Extension_Pack-{{ virtualbox_extension_version }}.vbox-extpack"
+    state: absent
+  become: true
+  when: extpack_installed.rc != 0
+
+- name: Clean up the extracted files
+  file:
+    path: "/tmp/virtualbox_extension"
+    state: absent
+  become: true
+  when: extpack_installed.rc != 0

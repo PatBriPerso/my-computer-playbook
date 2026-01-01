@@ -1,0 +1,11 @@
+---
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - wget
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+    update_cache: yes
+  become: true

@@ -1,0 +1,15 @@
+---
+- name: Install linux headers and dkms
+  ansible.builtin.apt:
+    name:
+      - "linux-headers-{{ ansible_kernel }}"
+      - dkms
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Install specific version of VirtualBox
+  ansible.builtin.apt:
+    name: "virtualbox-{{ virtualbox_version }}"
+    state: present
+  become: true
