@@ -1,0 +1,30 @@
+---
+# See: https://github.com/php-build/php-build/blob/1249ab2fcd99d1cc313473ab4f219d89505d6044/install-dependencies.sh#L34-L61
+build_dependencies:
+# does not exist  - autoconf2.13
+# does not exist  - autoconf2.64
+  - autoconf
+  - bash
+  - bison
+  - build-essential
+  - ca-certificates
+  - curl
+  - findutils
+  - git
+  - libbz2-dev
+  - libcurl4-gnutls-dev
+  - libicu-dev
+  - libjpeg-dev
+  - libmcrypt-dev
+  - libonig-dev
+  - libpng-dev
+  - libreadline-dev
+  - libsqlite3-dev
+  - libssl-dev
+  - libtidy-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - libzip-dev
+  - pkg-config
+  - re2c
+  - zlib1g-dev

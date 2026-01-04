@@ -10,6 +10,11 @@ terminator:
         # scrollback_lines: 5000
 
 # excluded_apps_groups:
+#   - essential
+#   - files-management
+#   - comm
+#   - dev
+#   - devops
 #   - media
 
 # my_apps_groups:

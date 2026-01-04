@@ -1,0 +1,9 @@
+---
+- name: install versions
+  shell: bash -lc 'PHP_BUILD_CONFIGURE_OPTS="{{ phpbuild_configure_extras }}" phpenv install {{ item }}'
+  args:
+    creates: "{{ phpenv_root }}/versions/{{ item }}/bin/php"
+  loop: "{{ phpenv_versions }}"
+
+- name: set php {{ phpenv_global }} as global
+  shell: bash -lc "phpenv global {{ phpenv_global }} && phpenv rehash"

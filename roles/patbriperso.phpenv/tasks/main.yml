@@ -1,0 +1,5 @@
+#SPDX-License-Identifier: MIT-0
+---
+- include_tasks: prepare.yml
+- include_tasks: install.yml
+- include_tasks: install_versions.yml

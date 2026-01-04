@@ -1,0 +1,42 @@
+---
+- include_vars: "main.yml"
+
+- include_vars: "{{ phpenv_env }}.yml"
+
+- name: Ensure phpenv directory exists
+  ansible.builtin.file:
+    path: "{{ phpenv_root }}"
+    state: directory
+
+- name: Checkout phpenv_repo
+  ansible.builtin.git:
+    repo: "{{ phpenv_repo }}"
+    dest: "{{ phpenv_root }}"
+    version: "{{ phpenv_version }}"
+    accept_hostkey: true
+
+- name: Create plugins directory
+  ansible.builtin.file:
+    path: "{{ phpenv_root }}/plugins"
+    state: directory
+
+- ansible.builtin.debug:
+    msg: "plugins: {{ phpenv_plugins }}"
+
+- name: Install plugins
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ phpenv_root }}/plugins/{{ item.name }}"
+    version: "{{ item.version }}" # TODO: default = master
+    depth: "{{ item.depth }}" # TODO: default? omit?
+    accept_hostkey: true
+  loop: "{{ phpenv_plugins }}"
+
+- name: Add phpenv initialization to profile
+  template:
+    src: phpenv.sh.j2
+    dest: /etc/profile.d/phpenv.sh
+    owner: root
+    group: root
+    mode: 0644
+  become: true

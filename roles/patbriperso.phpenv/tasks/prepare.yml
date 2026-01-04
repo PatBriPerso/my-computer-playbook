@@ -1,0 +1,6 @@
+---
+- name: Load the OS specific variables
+  ansible.builtin.include_vars: "{{ ansible_distribution | lower }}.yml"
+
+- name: Include tasks for the current distribution
+  include_tasks: "prepare-{{ ansible_distribution | lower }}.yml"

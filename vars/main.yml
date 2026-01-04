@@ -44,6 +44,21 @@ default_apps_groups:
   dev:
     description: "Outils de développement"
     apps:
+      - name: phpenv
+        type: role
+        role: patbriperso.phpenv
+        vars:
+          phpenv_repo: "https://github.com/phpenv/phpenv.git"
+          phpenv_env: user
+          phpenv_global: 8.3.29
+          phpenv_versions:
+            - 8.3.23
+            - 8.3.29
+            - 8.4.16
+          phpbuild_configure_extras: "--with-sodium" #--with-bz2 --with-pgsql --with-pdo-pgsql
+          phpenv_build_dependencies_extras:
+            - libsodium-dev
+
       - name: codium
         type: snap
         classic: true

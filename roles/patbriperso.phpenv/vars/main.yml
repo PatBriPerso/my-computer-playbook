@@ -1,0 +1,9 @@
+#SPDX-License-Identifier: MIT-0
+---
+phpenv_repo: "https://github.com/phpenv/phpenv.git"
+
+phpenv_plugins:
+  - name: php-build
+    repo: "https://github.com/php-build/php-build.git"
+    version: master
+    depth: 1

@@ -1,0 +1,23 @@
+---
+- name: Install git
+  ansible.builtin.apt:
+    name: git
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Install php-build dependencies
+  ansible.builtin.apt: 
+    pkg: "{{ item }}"
+    state: present
+    install_recommends: no
+  with_items: "{{ build_dependencies }}"
+  become: true
+
+- name: Install php-build dependencies extra
+  ansible.builtin.apt: 
+    pkg: "{{ item }}"
+    state: present
+    install_recommends: no
+  with_items: "{{ phpenv_build_dependencies_extras }}"
+  become: true
