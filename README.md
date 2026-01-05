@@ -97,6 +97,13 @@ cloud) :
 cp config.example.yml config.yml 
 ```
 
+### Installation des drivers DisplayLink
+
+Utiliser cette repo : [https://github.com/AdnanHodzic/displaylink-debian](https://github.com/AdnanHodzic/displaylink-debian).
+
+Comme indiqué dans le README, j'ai cloné la repo, lancé le script et répondu à
+quelques questions. Les drivers se sont installés correctement du premier coup.
+
 
 
 Pour faire mes tests avec une machine virtuelle Virtual Box, je monte le
