@@ -44,6 +44,13 @@ default_apps_groups:
   dev:
     description: "Outils de développement"
     apps:
+      - name: yq
+        type: cmd
+        cmd: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O {{ ansible_env.HOME }}/.local/bin/yq
+          chmod +x ~/.local/bin/yq
+        creates: "{{ ansible_env.HOME }}/.local/bin/yq"
+
       - name: phpenv
         type: role
         role: patbriperso.phpenv
