@@ -44,6 +44,11 @@ default_apps_groups:
   dev:
     description: "Outils de développement"
     apps:
+      - name: clickhouse-client
+        type: role
+        role: patbriperso.clickhouse
+        become: true
+
       - name: yq
         type: cmd
         cmd: |

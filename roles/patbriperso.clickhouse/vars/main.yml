@@ -1,0 +1,10 @@
+---
+clickhouse_repo_url: "https://packages.clickhouse.com/deb"
+clickhouse_repo_distribution: "stable"
+clickhouse_repo_component: "main"
+
+clickhouse_keyring_url: "https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key"
+clickhouse_keyring_path: "/usr/share/keyrings/clickhouse-keyring.gpg"
+
+clickhouse_packages:
+  - clickhouse-client

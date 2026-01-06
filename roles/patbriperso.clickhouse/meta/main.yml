@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  role_name: clickhouse_client
+  author: PatBriPerso
+  description: Install ClickHouse client from official repository
+  license: MIT
+  min_ansible_version: "2.14"
+  platforms:
+    - name: Debian
+      versions:
+        - trixie
+dependencies: []
