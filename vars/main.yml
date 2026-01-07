@@ -46,6 +46,9 @@ default_apps_groups:
   dev:
     description: "Outils de développement"
     apps:
+      - name: python3-pip
+        type: apt
+
       - name: clickhouse-client
         type: role
         role: patbriperso.clickhouse
