@@ -2,6 +2,8 @@ default_apps_groups:
   essential:
     description: "Recommanded system tools"
     apps:
+      - name: entr
+        type: apt
       - name: htop
         type: apt
       - name: curl
