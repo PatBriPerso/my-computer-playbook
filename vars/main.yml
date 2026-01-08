@@ -54,11 +54,6 @@ default_apps_groups:
       - name: python3-pip
         type: apt
 
-      - name: clickhouse-client
-        type: role
-        role: patbriperso.clickhouse
-        become: true
-
       - name: yq
         type: cmd
         cmd: |
@@ -114,10 +109,20 @@ default_apps_groups:
   devops:
     description: "Tools for DevOps operation"
     apps:
+      # client en GTK+ pour des bureaux distants
+      - name: remmina
+        type: apt
+
+      - name: clickhouse-client
+        type: role
+        role: patbriperso.clickhouse
+        become: true
+
       - name: docker
         type: role
         role: geerlingguy.docker
         become: true
+
       - name: virtualbox
         type: role
         role: patbriperso.virtualbox

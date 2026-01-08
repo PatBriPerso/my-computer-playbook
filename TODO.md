@@ -9,7 +9,6 @@ Reste à ajouter aux installations :
 - Brave ?
 - Chrome ?
 - Opera ?
-- Remmina
 - Synology Assistant
 - Calibre
 - draw.io
