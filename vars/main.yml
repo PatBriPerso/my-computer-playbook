@@ -26,6 +26,11 @@ default_apps_groups:
           rm ./install.sh
         creates: "{{ ansible_env.HOME }}/.resh/bin/resh-cli"
 
+  web:
+    apps:
+      - name: chromium
+        type: apt
+
   files-management:
     apps:
       - name: TagSpaces

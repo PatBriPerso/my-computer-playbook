@@ -8,7 +8,6 @@ Reste à ajouter aux installations :
 - BambuLab
 - Brave ?
 - Chrome ?
-- Chromium ?
 - Opera ?
 - Remmina
 - Synology Assistant
@@ -17,8 +16,6 @@ Reste à ajouter aux installations :
 - balenaEtcher
 - ThunderBird ? -> Tester Evolution
 - Anki
-- phpenv
-- VirtualBox
 - ParameterStoreManager (+ AWS CLI ?)
 - Deskflow (pilotage de plusieurs PC avec même souris/clavier = MouseWithoutBorder)
 
