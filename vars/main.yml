@@ -10,6 +10,15 @@ default_apps_groups:
         type: apt
       - name: wget
         type: apt
+      - name: grub configuration
+        type: role
+        role: patbriperso.grub_config
+        become: true
+        vars:
+          grub_custom_settings:
+            GRUB_GFXMODE: "1024x768"
+            GRUB_CMDLINE_LINUX_DEFAULT: '"quiet video=1280x800"'
+            GRUB_TIMEOUT: "3"    
       - name: terminator
         type: role
         role: patbriperso.terminator

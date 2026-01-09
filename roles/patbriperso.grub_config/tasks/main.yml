@@ -1,0 +1,20 @@
+---
+- name: Définir les options GRUB par défaut si non fournies
+  set_fact:
+    grub_custom_settings: "{{ grub_custom_settings | default({'GRUB_GFXMODE': '640x480'}) }}"
+
+- name: Générer le fichier custom GRUB avec les options passées
+  copy:
+    dest: /etc/default/grub.d/custom_settings.cfg
+    content: |
+      # Fichier GRUB généré par Ansible
+      {% for key, value in grub_custom_settings.items() %}
+      {{ key }}={{ value }}
+      {% endfor %}
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Mettre à jour la configuration GRUB
+  command: update-grub
+  become: true
