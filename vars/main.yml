@@ -15,6 +15,14 @@ default_apps_groups:
         role: patbriperso.terminator
         vars:
           terminator_config: "{{ terminator.config | default([]) }}"
+      - name: bash-git-prompt
+        type: role
+        role: patbriperso.bash_git_prompt
+        vars:
+          bash_git_prompt_env:
+            git_prompt_only_in_repo: 0
+            git_prompt_show_upstream: 1
+            git_prompt_theme: Custom
       - name: filezilla
         type: apt
       - name: resh

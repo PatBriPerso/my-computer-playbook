@@ -1,0 +1,10 @@
+---
+# URL du dépôt git
+bash_git_prompt_repo: https://github.com/magicmonty/bash-git-prompt.git
+
+# Dossier d'installation
+bash_git_prompt_dest: "{{ ansible_env.HOME }}/.bash-git-prompt"
+
+# Variables d'environnement à ajouter dans .bashrc
+bash_git_prompt_env:
+  git_prompt_only_in_repo: 1

@@ -1,0 +1,35 @@
+---
+- name: Ensure git is installed
+  become: true
+  apt:
+    name: git
+    state: present
+    update_cache: true
+
+- name: Clone bash-git-prompt repository
+  git:
+    repo: "{{ bash_git_prompt_repo }}"
+    dest: "{{ bash_git_prompt_dest }}"
+    depth: 1
+    version: master
+    update: yes
+
+- name: Add bash-git-prompt to .bashrc
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    marker: "# {mark} ANSIBLE BASH GIT PROMPT"
+    block: |
+      if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
+      {% for key, value in bash_git_prompt_env | default({}) | dictsort %}
+          {{ key | upper }}={{ value }}
+      {% endfor %}
+          source "$HOME/.bash-git-prompt/gitprompt.sh"
+      fi
+
+- name: Copy git-prompt-colors.sh to user's home
+  copy:
+    src: git-prompt-colors.sh
+    dest: "{{ ansible_env.HOME }}/.git-prompt-colors.sh"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+    mode: '0644'
