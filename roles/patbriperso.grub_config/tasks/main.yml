@@ -14,7 +14,4 @@
     owner: root
     group: root
     mode: '0644'
-
-- name: Mettre à jour la configuration GRUB
-  command: update-grub
-  become: true
+  notify: Mettre à jour GRUB
