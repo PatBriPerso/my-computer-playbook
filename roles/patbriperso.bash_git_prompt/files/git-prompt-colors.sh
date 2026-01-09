@@ -9,6 +9,11 @@
 override_git_prompt_colors() {
   GIT_PROMPT_THEME_NAME="Patrick"
 
+  function prompt_callback {
+    local PS1="$(whoami)@$(hostname):$(gp_truncate_pwd)"
+    gp_set_window_title "$PS1"
+  }
+
   Time12a="\$(date +%H:%M:%S)"
   if [ "$(id -u)" != "0" ]; then
      UserHost_Color="${BoldGreen}"
