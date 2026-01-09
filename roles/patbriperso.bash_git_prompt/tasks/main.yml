@@ -23,6 +23,8 @@
       {% for key, value in bash_git_prompt_env | default({}) | dictsort %}
           {{ key | upper }}={{ value }}
       {% endfor %}
+          # Avoid conflit on PROMPT_COMMAND (with RESH for example)
+          PROMPT_COMMAND=
           source "$HOME/.bash-git-prompt/gitprompt.sh"
       fi
 
